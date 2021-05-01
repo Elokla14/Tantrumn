@@ -23,10 +23,20 @@ protected:
 	void RequestLookUp(float AxisValue);
 	void RequestLookRight(float AxisValue);
 	void RequestJump();
+	void RequestStopJump();
+
+	void RequestCrouchStart();
+	void RequestCrouchEnd();
+
+	void RequestSprintStart();
+	void RequestSprintEnd();
 
 	UPROPERTY(EditAnywhere, Category = "Look")
 		float BaseLookUpRate = 90.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Look")
 		float BaseLookRightRate = 90.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+		float SprintSpeed = 1200.0f;
 };
