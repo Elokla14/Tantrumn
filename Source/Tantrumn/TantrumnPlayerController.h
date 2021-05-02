@@ -14,6 +14,7 @@ class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
+
 protected:
 
 	void SetupInputComponent() override;
@@ -36,7 +37,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Look")
 		float BaseLookRightRate = 90.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Movement")
-		float SprintSpeed = 1200.0f;
 };
