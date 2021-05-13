@@ -18,6 +18,8 @@ class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 
+	virtual void BeginPlay() override;
+
 protected:
 
 	void SetupInputComponent() override;
@@ -56,12 +58,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 		USoundCue* JumpSound = nullptr;
 
-	ATantrumnGameModeBase* GameModeRef;
-
 	//used to determine flick of axis
 	//float LastDelta = 0.0f;
 	float LastAxis = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 		float FlickThreshold = 0.75f;
+
+	ATantrumnGameModeBase* GameModeRef;
 };

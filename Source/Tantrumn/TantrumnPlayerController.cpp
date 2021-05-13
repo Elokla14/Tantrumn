@@ -8,6 +8,12 @@
 #include "TantrumnCharacterBase.h"
 #include "TantrumnGameModeBase.h"
 
+void ATantrumnPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	GameModeRef = Cast<ATantrumnGameModeBase>(GetWorld()->GetAuthGameMode());
+}
+
 static TAutoConsoleVariable<bool> CVarDisplayLaunchInputDelta(
 	TEXT("Tantrum.Character.Debug.DisplayLaunchInputDelta"),
 	false,
@@ -42,6 +48,7 @@ void ATantrumnPlayerController::SetupInputComponent()
 
 void ATantrumnPlayerController::RequestMoveForward(float AxisValue)
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (AxisValue != 0.f)
 	{
 		FRotator const ControlSpaceRot = GetControlRotation();
@@ -52,6 +59,7 @@ void ATantrumnPlayerController::RequestMoveForward(float AxisValue)
 
 void ATantrumnPlayerController::RequestMoveRight(float AxisValue)
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (AxisValue != 0.f)
 	{
 		FRotator const ControlSpaceRot = GetControlRotation();
@@ -129,6 +137,7 @@ void ATantrumnPlayerController::RequestStopPullObject()
 
 void ATantrumnPlayerController::RequestJump()
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (GetCharacter())
 	{
 		GetCharacter()->Jump();
@@ -145,6 +154,7 @@ void ATantrumnPlayerController::RequestStopJump()
 
 void ATantrumnPlayerController::RequestCrouchStart()
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if(!GetCharacter()->GetCharacterMovement()->IsMovingOnGround()) {return;}
 	if (GetCharacter())
 	{
@@ -162,6 +172,7 @@ void ATantrumnPlayerController::RequestCrouchEnd()
 
 void ATantrumnPlayerController::RequestSprintStart()
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(GetCharacter()))
 	{
 		TantrumnCharacterBase->RequestSprintStart();
