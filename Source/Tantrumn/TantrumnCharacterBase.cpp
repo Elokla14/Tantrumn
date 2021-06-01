@@ -51,6 +51,7 @@ ATantrumnCharacterBase::ATantrumnCharacterBase()
 void ATantrumnCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	EffectCooldown = DefautlEffectCooldown;
 	if (GetCharacterMovement())
 	{
 		MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
@@ -65,6 +66,20 @@ void ATantrumnCharacterBase::Tick(float DeltaTime)
 	if (bIsStunned)
 	{
 		return;
+	}
+
+	if (bIsUnderEffect)
+	{
+		if (EffectCooldown > 0)
+		{
+			EffectCooldown -= DeltaTime;
+		}
+		else
+		{
+			bIsUnderEffect = false;
+			EffectCooldown = DefautlEffectCooldown;
+			EndEffect();
+		}
 	}
 
 	if (CharacterThrowState == ECharacterThrowState::Throwing)
@@ -191,6 +206,14 @@ void ATantrumnCharacterBase::ResetThrowableObject()
 	CharacterThrowState = ECharacterThrowState::None;
 	ThrowableActor = nullptr;
 }
+
+void ATantrumnCharacterBase::RequestUseObject()
+{
+	ApplyEffect_Implementation(ThrowableActor->GetEffectType(), true);
+	ThrowableActor->Destroy();
+	ResetThrowableObject();
+}
+
 
 void ATantrumnCharacterBase::OnThrowableAttached(AThrowableActor* InThrowableActor)
 {
@@ -433,4 +456,47 @@ void ATantrumnCharacterBase::OnStunEnd()
 	StunBeginTimestamp = 0.0f;
 	StunTime = 0.0f;
 	//return the speed
+}
+
+void ATantrumnCharacterBase::ApplyEffect_Implementation(EEffectType EffectType, bool bIsBuff)
+{
+	if (bIsUnderEffect) return;
+
+	CurrentEffect = EffectType;
+	bIsUnderEffect = true;
+	bIsEffectBuff = bIsBuff;
+
+	switch (CurrentEffect)
+	{
+	case EEffectType::Speed:
+		bIsEffectBuff ? SprintSpeed *= 2 : GetCharacterMovement()->DisableMovement();
+		break;
+	case EEffectType::Jump:
+		// Implement Jump Buff/Debuff
+		break;
+	case EEffectType::Power:
+		// Implement Power Buff/Debuff
+		break;
+	default:
+		break;
+	}
+}
+
+void ATantrumnCharacterBase::EndEffect()
+{
+	bIsUnderEffect = false;
+	switch (CurrentEffect)
+	{
+	case EEffectType::Speed:
+		bIsEffectBuff ? SprintSpeed /= 2, RequestSprintEnd() : GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		break;
+	case EEffectType::Jump:
+		// Implement Jump Buff/Debuff
+		break;
+	case EEffectType::Power:
+		// Implement Power Buff/Debuff
+		break;
+	default:
+		break;
+	}
 }

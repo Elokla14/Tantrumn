@@ -98,7 +98,14 @@ void ATantrumnPlayerController::RequestThrowObject(float AxisValue)
 			const bool IsFlick = fabs(currentDelta) > FlickThreshold;
 			if (IsFlick)
 			{
-				TantrumnCharacterBase->RequestThrowObject();
+				if (AxisValue > 0)
+				{
+					TantrumnCharacterBase->RequestThrowObject();
+				}
+				else
+				{
+					TantrumnCharacterBase->RequestUseObject();
+				}
 			}
 		}
 		else
