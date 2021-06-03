@@ -36,7 +36,7 @@ void ATantrumnPlayerController::SetupInputComponent()
 
 		InputComponent->BindAction(TEXT("PullObject"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestPullObject);
 		InputComponent->BindAction(TEXT("PullObject"), EInputEvent::IE_Released, this, &ATantrumnPlayerController::RequestStopPullObject);
-		InputComponent->BindAction(TEXT("ThrowObjectMouse"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestThrowObject);
+		InputComponent->BindAction(TEXT("ThrowObjectMouse"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestThrowObjectAction);
 
 		InputComponent->BindAxis(TEXT("MoveForward"), this, &ATantrumnPlayerController::RequestMoveForward);
 		InputComponent->BindAxis(TEXT("MoveRight"), this, &ATantrumnPlayerController::RequestMoveRight);
@@ -115,7 +115,7 @@ void ATantrumnPlayerController::RequestThrowObject(float AxisValue)
 	}
 }
 
-void ATantrumnPlayerController::RequestThrowObject()
+void ATantrumnPlayerController::RequestThrowObjectAction()
 {
 	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(GetCharacter()))
 	{

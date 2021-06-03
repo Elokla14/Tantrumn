@@ -405,8 +405,8 @@ void ATantrumnCharacterBase::OnNotifyBeginReceived(FName NotifyName, const FBran
 		}
 	}
 	//const FVector& Direction = GetMesh()->GetSocketRotation(TEXT("ObjectAttach")).Vector() * -ThrowSpeed;
-	//const FVector& Direction = GetActorForwardVector() * ThrowSpeed;				// Set throwing function to character rotation
-	const FVector& Direction = GetController()->GetControlRotation().Vector() * ThrowSpeed;			// Set throwing function to camera rotation
+	//const FVector& Direction = GetActorForwardVector() * ThrowSpeed;				// Set throwing function to character direction
+	const FVector& Direction = GetController()->GetControlRotation().Vector() * ThrowSpeed;			// Set throwing function to camera direction
 	ThrowableActor->Launch(Direction);
 
 	if (CVarDisplayThrowVelocity->GetBool())

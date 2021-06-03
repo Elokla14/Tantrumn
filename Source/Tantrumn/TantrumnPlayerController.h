@@ -29,7 +29,7 @@ protected:
 	void RequestLookUp(float AxisValue);
 	void RequestLookRight(float AxisValue);
 	void RequestThrowObject(float AxisValue);
-	void RequestThrowObject();
+	void RequestThrowObjectAction();
 
 	void RequestPullObject();
 	void RequestStopPullObject();
