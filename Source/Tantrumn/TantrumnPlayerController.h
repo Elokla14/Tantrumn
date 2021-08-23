@@ -19,6 +19,8 @@ class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 public:
 
 	virtual void BeginPlay() override;
+	//in local mp we need to make sure the controller has received the player in order to correctly set up the hud
+	virtual void ReceivedPlayer() override;
 
 protected:
 
@@ -63,7 +65,7 @@ protected:
 	float LastAxis = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-		float FlickThreshold = 0.75f;
+		float FlickThreshold = 0.70f;
 
 	ATantrumnGameModeBase* GameModeRef;
 };

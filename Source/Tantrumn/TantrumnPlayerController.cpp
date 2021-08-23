@@ -11,7 +11,27 @@
 void ATantrumnPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	GameModeRef = Cast<ATantrumnGameModeBase>(GetWorld()->GetAuthGameMode());
+	//GameModeRef = Cast<ATantrumnGameModeBase>(GetWorld()->GetAuthGameMode());
+}
+
+void ATantrumnPlayerController::ReceivedPlayer()
+{
+	Super::ReceivedPlayer();
+	GameModeRef = GetWorld()->GetAuthGameMode<ATantrumnGameModeBase>();
+	if (ensureMsgf(GameModeRef, TEXT("ATantrumnPlayerController::ReceivedPlayer missing GameMode Reference")))
+	{
+		GameModeRef->ReceivePlayer(this);
+	}
+
+	if (HUDClass)
+	{
+		HUDWidget = CreateWidget(this, HUDClass);
+		if (HUDWidget)
+		{
+			//HUDWidget->AddToViewport();
+			HUDWidget->AddToPlayerScreen();
+		}
+	}
 }
 
 static TAutoConsoleVariable<bool> CVarDisplayLaunchInputDelta(
@@ -91,14 +111,14 @@ void ATantrumnPlayerController::RequestThrowObject(float AxisValue)
 			{
 				if (fabs(currentDelta) > 0.0f)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Axis: %f LastAxis: %f currentDelta: %f"), AxisValue, LastAxis);
+					UE_LOG(LogTemp, Warning, TEXT("Axis: %f LastAxis: %f currentDelta: %f"), AxisValue, LastAxis, currentDelta);
 				}
 			}
 			LastAxis = AxisValue;
 			const bool IsFlick = fabs(currentDelta) > FlickThreshold;
 			if (IsFlick)
 			{
-				if (AxisValue > 0)
+				if (currentDelta > 0)
 				{
 					TantrumnCharacterBase->RequestThrowObject();
 				}

@@ -32,7 +32,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	EGameState GetCurrentGameState() const;
-	void PlayerReachedEnd();
+	void PlayerReachedEnd(APlayerController* PlayerController);
+
+	void ReceivePlayer(APlayerController* PlayerController);
 
 private:
 
@@ -45,17 +47,25 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Game Details")
 		float GameCountdownDuration = 4.0f;
 
+	UFUNCTION(BlueprintCallable, Category = "Game Details")
+		void SetNumExpectedPlayers(uint8 InNumExpectedPlayers) { NumExpectedPlayers = InNumExpectedPlayers; }
+
+	UPROPERTY(EditAnywhere, Category = "Game Details")
+		uint8 NumExpectedPlayers = 1u;
+
 	FTimerHandle TimerHandle;
 
 	UPROPERTY()
-		UTantrumnGameWidget* GameWidget; // Object we'll be creating and adding to the Viewport
+		TMap<APlayerController*, UTantrumnGameWidget*> GameWidgets; // Object we'll be creating and adding to the Viewport
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<UTantrumnGameWidget> GameWidgetClass; // Exposed class to check the type of widget to display
-
+	
+	UPROPERTY()
 	APlayerController* PC = nullptr;
 
 	// --- FUNCTIONS --- //
 
+	void AttemptStartGame();
 	void DisplayCountdown();
 	void StartGame();
 };

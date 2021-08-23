@@ -14,8 +14,12 @@ void ATantrumnGameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentGameState = EGameState::Waiting;
-	DisplayCountdown();
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATantrumnGameModeBase::StartGame, GameCountdownDuration, false);
+	
+}
+
+void ATantrumnGameModeBase::ReceivePlayer(APlayerController* PlayerController)
+{
+	AttemptStartGame();
 }
 
 EGameState ATantrumnGameModeBase::GetCurrentGameState() const
@@ -23,31 +27,64 @@ EGameState ATantrumnGameModeBase::GetCurrentGameState() const
 	return CurrentGameState;
 }
 
-void ATantrumnGameModeBase::PlayerReachedEnd()
+void ATantrumnGameModeBase::PlayerReachedEnd(APlayerController* PlayerController)
 {
+	//one gamemode base is shared between players in local mp
 	CurrentGameState = EGameState::GameOver;
+	UTantrumnGameWidget** GameWidget = GameWidgets.Find(PlayerController);
+	if (GameWidget)
+	{
+		(*GameWidget)->LevelComplete();
+		FInputModeUIOnly InputMode;
+		PlayerController->SetInputMode(InputMode);
+		PlayerController->SetShowMouseCursor(true);
+	}
+}
 
-	GameWidget->LevelComplete();
-	FInputModeUIOnly InputMode;
-	PC->SetInputMode(InputMode);
-	PC->SetShowMouseCursor(true);
+void ATantrumnGameModeBase::AttemptStartGame()
+{
+	if (GetNumPlayers() == NumExpectedPlayers)
+	{
+		DisplayCountdown();
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATantrumnGameModeBase::StartGame, GameCountdownDuration, false);
+	}
 }
 
 void ATantrumnGameModeBase::DisplayCountdown()
 {
-	if (!GameWidgetClass) { return; }
+	if (!GameWidgetClass)
+	{
+		return;
+	}
 
-	PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	GameWidget = CreateWidget<UTantrumnGameWidget>(PC, GameWidgetClass);
-	GameWidget->AddToViewport();
-	GameWidget->StartCountdown(GameCountdownDuration, this);
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		if (PlayerController && PlayerController->PlayerState && !MustSpectate(PlayerController))
+		{
+			if (UTantrumnGameWidget* GameWidget = CreateWidget<UTantrumnGameWidget>(PlayerController, GameWidgetClass))
+			{
+				//GameWidget->AddToViewport();
+				GameWidget->AddToPlayerScreen();
+				GameWidget->StartCountdown(GameCountdownDuration, this);
+				GameWidgets.Add(PlayerController, GameWidget);
+			}
+		}
+	}
 }
 
 void ATantrumnGameModeBase::StartGame()
 {
 	CurrentGameState = EGameState::Playing;
-	/*FInputModeGameOnly InputMode;
-	PC->SetInputMode(InputMode);
-	PC->SetShowMouseCursor(false);*/
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		if (PlayerController && PlayerController->PlayerState && !MustSpectate(PlayerController))
+		{
+			FInputModeGameOnly InputMode;
+			PlayerController->SetInputMode(InputMode);
+			PlayerController->SetShowMouseCursor(false);
+		}
+	}
 }
 

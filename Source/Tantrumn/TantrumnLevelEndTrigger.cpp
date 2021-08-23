@@ -4,6 +4,7 @@
 #include "TantrumnLevelEndTrigger.h"
 #include "TantrumnCharacterBase.h"
 #include "TantrumnGameModeBase.h"
+#include "TantrumnPlayerController.h"
 
 ATantrumnLevelEndTrigger::ATantrumnLevelEndTrigger()
 {
@@ -18,9 +19,10 @@ void ATantrumnLevelEndTrigger::BeginPlay()
 
 void ATantrumnLevelEndTrigger::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor)
 {
-	if (OtherActor == Cast<ATantrumnCharacterBase>(OtherActor))
+	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(OtherActor))
 	{
-		GameModeRef->PlayerReachedEnd();
+		APlayerController* PlayerController = TantrumnCharacterBase->GetController<APlayerController>();
+		GameModeRef->PlayerReachedEnd(PlayerController);
 	}
 }
 

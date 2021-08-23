@@ -1,0 +1,1 @@
+"C:\Users\Nerod\Unreal Editor\UnrealEngine\Engine\Binaries\Win64\UE4Editor.exe" "C:\Users\Nerod\OneDrive\Documents\Unreal Projects\Tantrumn\Tantrumn.uproject" -game
